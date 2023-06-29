@@ -16,25 +16,25 @@ import it.polito.tdp.itunes.model.Track;
 
 public class ItunesDAO {
 	
-	public List<Album> getAllAlbums(){
-		final String sql = "SELECT * FROM Album";
-		List<Album> result = new LinkedList<>();
-		
-		try {
-			Connection conn = DBConnect.getConnection();
-			PreparedStatement st = conn.prepareStatement(sql);
-			ResultSet res = st.executeQuery();
-
-			while (res.next()) {
-				result.add(new Album(res.getInt("AlbumId"), res.getString("Title")));
-			}
-			conn.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-			throw new RuntimeException("SQL Error");
-		}
-		return result;
-	}
+//	public List<Album> getAllAlbums(){
+//		final String sql = "SELECT * FROM Album";
+//		List<Album> result = new LinkedList<>();
+//		
+//		try {
+//			Connection conn = DBConnect.getConnection();
+//			PreparedStatement st = conn.prepareStatement(sql);
+//			ResultSet res = st.executeQuery();
+//
+//			while (res.next()) {
+//				result.add(new Album(res.getInt("AlbumId"), res.getString("Title")));
+//			}
+//			conn.close();
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//			throw new RuntimeException("SQL Error");
+//		}
+//		return result;
+//	}
 	
 	public List<Artist> getAllArtists(){
 		final String sql = "SELECT * FROM Artist";
@@ -139,4 +139,31 @@ public class ItunesDAO {
 		return result;
 	}
 	
+	public List<Album> getFilteredAlbums(Integer nSongs){
+		
+		final String sql = "SELECT a.albumId AS albumId, a.title AS title, COUNT(*) AS nSongs "
+				+ "FROM album a, track t "
+				+ "WHERE a.AlbumId = t.AlbumId "
+				+ "GROUP BY a.albumId, t.AlbumId "
+				+ "HAVING COUNT(*) > ?";
+		
+		List<Album> result = new ArrayList<Album>();
+		
+		try {
+			Connection conn = DBConnect.getConnection();
+			PreparedStatement st = conn.prepareStatement(sql);
+			st.setInt(1, nSongs);
+			ResultSet res = st.executeQuery();
+
+			while (res.next()) {
+				result.add(new Album(res.getInt("albumId"), res.getString("title"), res.getInt("nSongs")));
+			
+			}
+			conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new RuntimeException("SQL Error");
+		}
+		return result;
+	}
 }

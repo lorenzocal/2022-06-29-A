@@ -62,6 +62,9 @@ public class FXMLController {
     @FXML
     void doCreaGrafo(ActionEvent event) {
     	
+    	//Parte in cui prendo nSongs in input e creo il grafo.
+    	
+    	//Popolo entrambe le cmbBox.
     }
 
     @FXML // This method is called by the FXMLLoader when initialization is complete
